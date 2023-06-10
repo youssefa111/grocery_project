@@ -9,16 +9,24 @@ import java.util.List;
 public class BaseResponse<T> {
     private String message ;
     private int statusCode;
-
-    private List<T> body;
+    private T body;
 
    public BaseResponse(){
     message = "SUCCESS";
     statusCode = 200;
     }
 
-    public BaseResponse(List<T> body){
+    public BaseResponse(T body){
         message = "SUCCESS";
+        statusCode = 200;
+        this.body = body;
+    }
+//    public BaseResponse(String message){
+//        this.message = message;
+//        statusCode = 200;
+//    }
+    public BaseResponse(T body ,String message){
+       this.message = message;
         statusCode = 200;
         this.body = body;
     }
