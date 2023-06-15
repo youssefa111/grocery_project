@@ -34,7 +34,7 @@ public class CategoryService {
     }
 
     private void isCategoryExist(String category){
-        categoryRepository.findByCategory(category)
+        categoryRepository.findByCategory(category.toLowerCase())
                 .ifPresent(category1 -> {
                     throw new DuplicateRecordException("This Category: "+ category
                             +" already exists,You cant add it again");

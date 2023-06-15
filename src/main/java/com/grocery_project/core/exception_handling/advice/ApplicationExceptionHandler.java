@@ -1,12 +1,14 @@
 package com.grocery_project.core.exception_handling.advice;
 
-import com.grocery_project.core.exception_handling.error.ErrorModel;
+import com.grocery_project.core.base.BaseResponse;
+import com.grocery_project.core.exception_handling.exception.CustomAccessDeniedHandler;
 import com.grocery_project.core.exception_handling.exception.DuplicateRecordException;
 import com.grocery_project.core.exception_handling.exception.InvalidDataEntryException;
 import com.grocery_project.core.exception_handling.exception.RecordNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,21 +25,27 @@ public class ApplicationExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(ApplicationExceptionHandler.class);
 
+    @ExceptionHandler(value = {Exception.class})
+    public ResponseEntity<BaseResponse> commentException1(Exception exception) {
+        exception.printStackTrace();
+        return null;
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorModel handleInvalidArgument(MethodArgumentNotValidException ex) {
+    public BaseResponse<List<String>> handleInvalidArgument(MethodArgumentNotValidException ex) {
 
-       List<String> errorMap = new ArrayList<>();
+        List<String> errorMap = new ArrayList<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> {
             errorMap.add(error.getField() + ": " + error.getDefaultMessage());
         });
 
-        return new ErrorModel(HttpStatus.BAD_REQUEST.name(), errorMap);
+        return new BaseResponse<>(errorMap, HttpStatus.BAD_REQUEST.name(), Boolean.FALSE, HttpStatus.BAD_REQUEST.value());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RuntimeException.class)
-    public ErrorModel handleRuntimeException(RuntimeException ex) {
+    public BaseResponse<List<String>> handleRuntimeException(RuntimeException ex) {
 
 //        logger.info(ex.toString());
 //        logger.info("===========================================");
@@ -56,43 +64,56 @@ public class ApplicationExceptionHandler {
 //        ex.printStackTrace();
 //        logger.info("===========================================");
 
-        return new ErrorModel(HttpStatus.BAD_REQUEST.name(), Collections.singletonList(ex.getMessage()));
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.BAD_REQUEST.name(), Boolean.FALSE, HttpStatus.BAD_REQUEST.value());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
-    public ErrorModel handleInternalServerErrorException(HttpServerErrorException.InternalServerError ex) {
-        return new ErrorModel( HttpStatus.INTERNAL_SERVER_ERROR.name(), Collections.singletonList(ex.getMessage()));
+    public BaseResponse<List<String>> handleInternalServerErrorException(HttpServerErrorException.InternalServerError ex) {
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR.name(), Boolean.FALSE, HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateRecordException.class)
-    public ErrorModel handlerDuplicateRecordException(DuplicateRecordException ex){
+    public BaseResponse<List<String>> handlerDuplicateRecordException(DuplicateRecordException ex) {
 
-        return new ErrorModel(HttpStatus.CONFLICT.name(), Collections.singletonList(ex.getMessage()));
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.CONFLICT.name(), Boolean.FALSE, HttpStatus.CONFLICT.value());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(RecordNotFoundException.class)
-    public ErrorModel handlerRecordNotFound(RecordNotFoundException ex){
+    public BaseResponse<List<String>> handlerRecordNotFound(RecordNotFoundException ex) {
 
-        return new ErrorModel(HttpStatus.NOT_FOUND.name(), Collections.singletonList(ex.getMessage()));
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.NOT_FOUND.name(), Boolean.FALSE, HttpStatus.NOT_FOUND.value());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidDataEntryException.class)
-    public ErrorModel handlerInvalidDataEntry(InvalidDataEntryException ex){
+    public BaseResponse<List<String>> handlerInvalidDataEntry(InvalidDataEntryException ex) {
 
-        return new ErrorModel(HttpStatus.BAD_REQUEST.name(), Collections.singletonList(ex.getMessage()));
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.BAD_REQUEST.name(), Boolean.FALSE, HttpStatus.BAD_REQUEST.value());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ErrorModel usernameNotFoundException(UsernameNotFoundException ex){
+    public BaseResponse<List<String>> usernameNotFoundException(UsernameNotFoundException ex) {
 
-        return new ErrorModel(HttpStatus.BAD_REQUEST.name(), Collections.singletonList(ex.getMessage()));
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.BAD_REQUEST.name(), Boolean.FALSE, HttpStatus.BAD_REQUEST.value());
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(CustomAccessDeniedHandler.class)
+    public BaseResponse<List<String>> forbiddenException(CustomAccessDeniedHandler ex) {
+
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
+    }
+
+//    @ExceptionHandler(value = {Exception.class})
+//    public ResponseEntity<BaseResponse> commentException(Exception exception) {
+//        exception.printStackTrace();
+//        return null;
+//    }
 
 
 }

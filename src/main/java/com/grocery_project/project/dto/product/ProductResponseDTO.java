@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Setter
 @Getter
@@ -15,17 +16,29 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ProductResponseDTO {
 
+    private Long id;
+
     private String name;
 
     private String description;
 
     private BigDecimal price;
 
-    private File image;
+    private Boolean isStocked;
+
+    private Boolean status;
+
+    private String imageUrl;
+
+    private Long purchaseNum;
 
     private CategoryResponseDTO categoryResponseDTO;
 
     private QuantityResponseDTO quantityResponseDTO;
 
     private DiscountResponseDTO discountResponseDTO;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 }

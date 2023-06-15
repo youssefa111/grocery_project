@@ -43,7 +43,7 @@ public class UserService  {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setIsActive((short) 1);
         userRepository.save(user);
-        return  new BaseResponse<>(List.of("User Account Created Successfully!"));
+        return  new BaseResponse<>(null,"User Account Created Successfully!");
     }
 
     private void isUsernameExist(User user) {

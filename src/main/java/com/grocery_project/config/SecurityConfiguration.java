@@ -1,6 +1,7 @@
 package com.grocery_project.config;
 
 import com.grocery_project.core.constant.AppConstants;
+import com.grocery_project.core.exception_handling.exception.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,6 +29,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
 
     private final String[] UNSECURED_URLS = {
@@ -42,23 +45,31 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
         http
-                .csrf()
-                .disable()
-                .authorizeHttpRequests()
-                .requestMatchers(UNSECURED_URLS)
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                 .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(
+                        (authorizeHttpRequests) ->
+                                authorizeHttpRequests
+                                        .requestMatchers(UNSECURED_URLS)
+                                        .permitAll()
+                                        .anyRequest()
+                                        .authenticated()
+                )
+                .sessionManagement(
+                        (sessionManagement) ->
+                                sessionManagement  .sessionConcurrency((sessionConcurrency) ->
+                                                sessionConcurrency
+                                                        .maximumSessions(1)
+                                                        .expiredUrl("/login?expired"))
+                                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout()
-                .logoutUrl(AppConstants.baseUrl +"/user/auth/logout")
-                .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                .logout(
+                        (logout) ->
+                                logout.logoutUrl(AppConstants.baseUrl +"/user/auth/logout")
+                                        .addLogoutHandler(logoutHandler)
+                                        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                );
 
         return http.build();
     }

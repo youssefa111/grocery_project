@@ -1,10 +1,14 @@
 package com.grocery_project.project.entity;
 
+import com.grocery_project.core.listeners.LowercaseEntityListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -15,8 +19,10 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(LowercaseEntityListener.class)
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
 
@@ -41,7 +47,7 @@ public class Product {
     @Column(name = "PURCHASE_NUM")
     private Long purchaseNum;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false,cascade = CascadeType.ALL)
     @JoinColumn(name = "QUANTITY_ID", nullable = false)
     private Quantity quantity;
 
@@ -54,9 +60,11 @@ public class Product {
     private Discount discount;
 
     @Column(name = "CREATED_AT")
+    @CreationTimestamp
     private Instant createdAt;
 
     @Column(name = "UPDATED_AT")
+    @UpdateTimestamp
     private Instant updatedAt;
 
 

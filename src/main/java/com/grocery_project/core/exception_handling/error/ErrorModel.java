@@ -14,8 +14,6 @@ public class ErrorModel{
 
     private Boolean success;
 
-
-
     private String message;
 
     private LocalDateTime dateTime;
