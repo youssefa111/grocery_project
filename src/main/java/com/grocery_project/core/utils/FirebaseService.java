@@ -6,6 +6,7 @@ import com.google.firebase.cloud.StorageClient;
 import com.google.firebase.database.FirebaseDatabase;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,30 +29,36 @@ import lombok.RequiredArgsConstructor;
 public class FirebaseService {
 
     private final Storage storage;
+    String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/grocery-project-8f6bf.appspot.com/o/images%s?alt=media";
 
-    public String uploadImage(MultipartFile file) throws IOException {
+    public String uploadImage(MultipartFile multipartFile) throws IOException {
 
-        if (!isImage(file)) {
+        if (!isImage(multipartFile)) {
             throw new IllegalArgumentException("Invalid file type. Only image files are allowed.");
         }
         long maxSizeInBytes = 25 * 1024 * 1024; // 25MB
-        if (!isFileSizeValid(file, maxSizeInBytes)) {
+        if (!isFileSizeValid(multipartFile, maxSizeInBytes)) {
             throw new IllegalArgumentException("File size exceeds the maximum limit of 25MB.");
         }
-        String fileName = file.getOriginalFilename();
-        String bucketName = "grocery-project-8f6bf.appspot.com"; // Replace with your Firebase Storage bucket name
+        String fileName = multipartFile.getOriginalFilename();
+        fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));
+        File file = this.convertToFile(multipartFile, fileName);
         String blobName = "images/" + fileName;
+        String bucketName = "grocery-project-8f6bf.appspot.com"; // Replace with your Firebase Storage bucket name
+        BlobId blobId = BlobId.of(bucketName,blobName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();
 
         Resource resource = new ClassPathResource("serviceAccountKey.json");
         FileInputStream files = new FileInputStream(resource.getFile());
         Credentials credentials = GoogleCredentials.fromStream(files);
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        BlobId blobId = BlobId.of(bucketName, blobName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
-        Blob blob = storage.create(blobInfo, file.getBytes());
 
-        return blob.getMediaLink();
+        Blob blob = storage.create(blobInfo,  Files.readAllBytes(file.toPath()));
+
+
+        System.out.println(URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+        return "https://firebasestorage.googleapis.com/v0/b/grocery-project-8f6bf.appspot.com/o/images%2F"+URLEncoder.encode(fileName, StandardCharsets.UTF_8) + "?alt=media";
     }
 
     public boolean isImage(MultipartFile file) {
@@ -66,7 +73,6 @@ public class FirebaseService {
         return fileSize <= maxSizeInBytes;
     }
 
-    String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/grocery-project-8f6bf.appspot.com/o/%s?alt=media";
 
     private String uploadFile(File file, String fileName) throws IOException {
         BlobId blobId = BlobId.of("grocery-project-8f6bf.appspot.com", fileName);

@@ -40,10 +40,9 @@ public class ProductService {
     public BaseResponse<Product> save(ProductRequestDTO categoryRequestDTO, MultipartFile image) throws IOException {
         isProductExist(categoryRequestDTO.getName());
         Product entity = productMapper.toEntity(categoryRequestDTO);
-        String imageUrl = firebaseService.uploadImage(image);
-        entity.setImageUrl(imageUrl);
-        entity.setStatus(true);
         var result = productRepository.save(entity);
+        String imageUrl = firebaseService.uploadImage(image);
+        result.setImageUrl(imageUrl);
 
         return  new BaseResponse<>(result,"This product is added Successfully!");
     }

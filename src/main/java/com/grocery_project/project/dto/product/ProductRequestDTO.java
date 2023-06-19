@@ -24,6 +24,12 @@ public class ProductRequestDTO {
     private String description;
     @NotNull
     private BigDecimal price;
+
+    private Long purchaseNum = 0L;
+
+    private Boolean isStocked = false;
+
+    private Boolean status = true;
 //    @NotNull
 //    private MultipartFile image;
     @NotNull

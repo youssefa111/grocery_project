@@ -1,6 +1,7 @@
 package com.grocery_project.config;
 
 import com.grocery_project.auth.token.repository.TokenRepository;
+import com.grocery_project.core.exception_handling.exception.CustomExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,30 +31,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userName;
-        if(authHeader == null || !authHeader.startsWith("Bearer "))
-        {
+            final String authHeader = request.getHeader("Authorization");
+            final String jwt;
+            final String userName;
+            if(authHeader == null || !authHeader.startsWith("Bearer "))
+            {
+                filterChain.doFilter(request,response);
+                return;
+            }
+
+            jwt = authHeader.substring(7);
+            userName = jwtService.extractUsername(jwt);
+            if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+                var isTokenValid = tokenRepository.findByToken(jwt).map( t -> !t.isExpired() && !t.isRevoked()).orElse(false);
+                if(jwtService.isTokenValid(jwt,userDetails) && isTokenValid ){
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+                else {
+                    throw new CustomExpiredJwtException("The session is Expired!, you need to login again.");
+                }
+            }
             filterChain.doFilter(request,response);
-            return;
         }
 
-        jwt = authHeader.substring(7);
-        userName = jwtService.extractUsername(jwt);
-        if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            var isTokenValid = tokenRepository.findByToken(jwt).map( t -> !t.isExpired() && !t.isRevoked()).orElse(false);
-            if(jwtService.isTokenValid(jwt,userDetails) && isTokenValid ){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
-        filterChain.doFilter(request,response);
+
     }
-}

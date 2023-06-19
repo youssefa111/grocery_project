@@ -1,10 +1,8 @@
 package com.grocery_project.core.exception_handling.advice;
 
 import com.grocery_project.core.base.BaseResponse;
-import com.grocery_project.core.exception_handling.exception.CustomAccessDeniedHandler;
-import com.grocery_project.core.exception_handling.exception.DuplicateRecordException;
-import com.grocery_project.core.exception_handling.exception.InvalidDataEntryException;
-import com.grocery_project.core.exception_handling.exception.RecordNotFoundException;
+import com.grocery_project.core.exception_handling.exception.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -108,6 +106,14 @@ public class ApplicationExceptionHandler {
 
         return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(CustomExpiredJwtException.class)
+    public BaseResponse<List<String>> forbiddenException(CustomExpiredJwtException ex) {
+
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
+    }
+
 
 //    @ExceptionHandler(value = {Exception.class})
 //    public ResponseEntity<BaseResponse> commentException(Exception exception) {
