@@ -1,12 +1,20 @@
 package com.grocery_project.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grocery_project.auth.token.repository.TokenRepository;
+import com.grocery_project.core.base.BaseResponse;
 import com.grocery_project.core.exception_handling.exception.CustomExpiredJwtException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+//@Order(2)
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -26,11 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenRepository tokenRepository;
 
+    @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        try{
             final String authHeader = request.getHeader("Authorization");
             final String jwt;
             final String userName;
@@ -40,26 +51,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            jwt = authHeader.substring(7);
-            userName = jwtService.extractUsername(jwt);
-            if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-                var isTokenValid = tokenRepository.findByToken(jwt).map( t -> !t.isExpired() && !t.isRevoked()).orElse(false);
-                if(jwtService.isTokenValid(jwt,userDetails) && isTokenValid ){
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                jwt = authHeader.substring(7);
+                userName = jwtService.extractUsername(jwt);
+                if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+                    var isTokenValid = tokenRepository.findByToken(jwt).map( t -> !t.isExpired() && !t.isRevoked()).orElse(false);
+                    if(jwtService.isTokenValid(jwt,userDetails) && isTokenValid ){
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    }
                 }
-                else {
-                    throw new CustomExpiredJwtException("The session is Expired!, you need to login again.");
-                }
+                filterChain.doFilter(request,response);
+            }catch(JwtException e){
+            BaseResponse errorResponse = new BaseResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.name(), Boolean.FALSE, HttpStatus.UNAUTHORIZED.value());
+
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(convertObjectToJson(errorResponse));
             }
-            filterChain.doFilter(request,response);
+
         }
 
+    private String convertObjectToJson(Object object) throws JsonProcessingException {
+        if (object == null) {
+            return null;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(object);
+    }
 
     }

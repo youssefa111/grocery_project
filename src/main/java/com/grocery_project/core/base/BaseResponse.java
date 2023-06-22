@@ -35,6 +35,12 @@ public class BaseResponse<T> {
         this.body = body;
     }
 
+    public BaseResponse(T body, String message, int statusCode) {
+        this.message = message;
+        this.statusCode = statusCode;
+        this.body = body;
+    }
+
     public BaseResponse(T body, String message, Boolean success, int statusCode) {
         this.message = message;
         this.statusCode = statusCode;

@@ -1,8 +1,7 @@
 package com.grocery_project.config;
 
 import com.grocery_project.core.constant.AppConstants;
-import com.grocery_project.core.exception_handling.exception.CustomAccessDeniedHandler;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,7 +17,6 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @EnableMethodSecurity(
         securedEnabled = true,
         jsr250Enabled = true
@@ -26,10 +24,15 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 public class SecurityConfiguration {
 
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
-    private final LogoutHandler logoutHandler;
-    private CustomAccessDeniedHandler customAccessDeniedHandler;
+//    @Autowired
+//    private  ExceptionHandlerFilter exceptionHandlerFilter;
+    @Autowired
+    private  JwtAuthenticationFilter jwtAuthFilter;
+    @Autowired
+    private  AuthenticationProvider authenticationProvider;
+    @Autowired
+    private  LogoutHandler logoutHandler;
+
 
 
     private final String[] UNSECURED_URLS = {
@@ -40,12 +43,11 @@ public class SecurityConfiguration {
     };
 
 
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                 .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         (authorizeHttpRequests) ->
                                 authorizeHttpRequests
@@ -54,19 +56,42 @@ public class SecurityConfiguration {
                                         .anyRequest()
                                         .authenticated()
                 )
+
+//                .exceptionHandling(
+//                        httpSecurityExceptionHandlingConfigurer ->
+//                                httpSecurityExceptionHandlingConfigurer
+//                                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+//                                          if (accessDeniedException != null){
+//                                              throw  new CustomAccessDeniedHandler("Access denied");
+//                                          }
+//                                          else {
+//                                                        throw new RuntimeException("Authentication failed");
+//                                                    }
+//                                        })
+//                                        .authenticationEntryPoint(
+//                                                (request, response, authException) -> {
+//                                                    if (authException != null) {
+//                                                        throw new CustomExpiredJwtException("Token has been expired!");
+//                                                    } else {
+//                                                        throw new RuntimeException("Authentication failed");
+//                                                    }
+//                                                }
+//                                        )
+//                )
                 .sessionManagement(
                         (sessionManagement) ->
-                                sessionManagement  .sessionConcurrency((sessionConcurrency) ->
+                                sessionManagement.sessionConcurrency((sessionConcurrency) ->
                                                 sessionConcurrency
                                                         .maximumSessions(1)
                                                         .expiredUrl("/login?expired"))
                                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider)
+//                .addFilterBefore(exceptionHandlerFilter,JwtAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(
                         (logout) ->
-                                logout.logoutUrl(AppConstants.baseUrl +"/user/auth/logout")
+                                logout.logoutUrl(AppConstants.baseUrl + "/user/auth/logout")
                                         .addLogoutHandler(logoutHandler)
                                         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 );

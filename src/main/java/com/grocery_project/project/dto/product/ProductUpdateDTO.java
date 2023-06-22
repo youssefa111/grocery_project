@@ -1,5 +1,8 @@
 package com.grocery_project.project.dto.product;
 
+import com.grocery_project.project.dto.category.CategoryUpdateDTO;
+import com.grocery_project.project.dto.quantity.QuantityRequestDTO;
+import com.grocery_project.project.dto.quantity.QuantityUpdateDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,5 +20,9 @@ public class ProductUpdateDTO {
     private String name;
     private String description;
     private BigDecimal price;
-    private MultipartFile image;
+    private Long purchaseNum;
+    private Boolean isStocked;
+    private Boolean status;
+    private CategoryUpdateDTO categoryUpdateDTO;
+    private QuantityUpdateDTO quantityUpdateDTO;
 }

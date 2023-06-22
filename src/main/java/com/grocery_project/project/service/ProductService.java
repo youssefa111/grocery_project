@@ -1,20 +1,16 @@
 package com.grocery_project.project.service;
 
 import com.grocery_project.core.base.BaseResponse;
+import com.grocery_project.core.constant.AppConstants;
 import com.grocery_project.core.exception_handling.exception.DuplicateRecordException;
 import com.grocery_project.core.exception_handling.exception.RecordNotFoundException;
 import com.grocery_project.core.utils.FirebaseService;
-import com.grocery_project.project.dto.category.CategoryRequestDTO;
-import com.grocery_project.project.dto.category.CategoryResponseDTO;
-import com.grocery_project.project.dto.category.CategoryUpdateDTO;
 import com.grocery_project.project.dto.product.ProductRequestDTO;
 import com.grocery_project.project.dto.product.ProductResponseDTO;
 import com.grocery_project.project.dto.product.ProductUpdateDTO;
-import com.grocery_project.project.entity.Category;
 import com.grocery_project.project.entity.Product;
 import com.grocery_project.project.mapper.ProductMapper;
 import com.grocery_project.project.repository.ProductRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +40,7 @@ public class ProductService {
         String imageUrl = firebaseService.uploadImage(image);
         result.setImageUrl(imageUrl);
 
-        return  new BaseResponse<>(result,"This product is added Successfully!");
+        return  new BaseResponse<>(result,"This product is added Successfully!", AppConstants.CREATE_STATUS);
     }
 
     private void isProductExist(String name){
@@ -58,10 +54,31 @@ public class ProductService {
 
 
     @Transactional
-    public BaseResponse<Product> update(ProductUpdateDTO productUpdateDTO) {
-        Product entity = productMapper.toEntity(productUpdateDTO);
-      var result =  productRepository.save(entity);
-        return  new BaseResponse<>(result,"This product is updated Successfully!");
+    public BaseResponse<Product> update(ProductUpdateDTO productUpdateDTO, MultipartFile image) throws IOException {
+        Optional<Product> result = productRepository.findById(productUpdateDTO.getId());
+        if (result.isPresent()){
+            var entity = result.get();
+            productMapper.updateProductFromDto(productUpdateDTO,entity);
+           var updatedEntity =  productRepository.save(entity);
+            if(image != null)
+            {
+                String imageURL = firebaseService.uploadImage(image);
+                updatedEntity.setImageUrl(imageURL);
+            }
+            return  new BaseResponse<>(updatedEntity,"This product is updated Successfully!");
+        }
+        else
+        {
+            throw new RecordNotFoundException("This Product with id:- {"+ productUpdateDTO.getId() + "} not found");
+        }
+
+    }
+
+    @Transactional
+    public BaseResponse<String> deactivateProduct(Long id) {
+       var result = productRepository.findById(id);
+        result.ifPresentOrElse(product -> product.setStatus(false),()-> { throw new RecordNotFoundException("this id {"+ id + "} of product is not exist!");});
+        return  new BaseResponse<>(null,"This Product is deactivated Successfully!");
     }
 
     @Transactional
@@ -77,23 +94,31 @@ public class ProductService {
         }
         else
         {
-            throw new RecordNotFoundException("This category with id:- {"+ id + "} not found");
+            throw new RecordNotFoundException("This Product with id:- {"+ id + "} not found");
         }
     }
 
+    public Product getById(Long id){
+        return  productRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("This Product with id:- {"+ id + "} not found"));
+    }
+
+
 
     public BaseResponse<List<ProductResponseDTO>> findAll() {
-
-        try {
             var entities = productRepository.findAll();
             List<ProductResponseDTO> result = new ArrayList<>();
             entities.forEach(product -> result.add(productMapper.toDTO(product)));
             return new BaseResponse<>(result);
+    }
 
-        }catch (Exception e){
+    public BaseResponse<List<ProductResponseDTO>> findActiveProducts(){
+        var entities = productRepository.findByStatusEquals(true);
+        List<ProductResponseDTO> result = new ArrayList<>();
+        entities.forEach(product -> result.add(productMapper.toDTO(product)));
+        return new BaseResponse<>(result);
+    }
 
-            e.printStackTrace();
-        }
-        return null;
+    public Product findByDiscountId(Long discountId){
+        return productRepository.findByDiscount_Id(discountId).orElseThrow(() -> new RecordNotFoundException("There is no Product has discount with:- {"+ discountId + "}, please re-check the id of the discount if its already exist!"));
     }
 }

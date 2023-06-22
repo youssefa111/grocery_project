@@ -53,11 +53,8 @@ public class FirebaseService {
         Credentials credentials = GoogleCredentials.fromStream(files);
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
 
-
         Blob blob = storage.create(blobInfo,  Files.readAllBytes(file.toPath()));
-
-
-        System.out.println(URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+        file.delete();
         return "https://firebasestorage.googleapis.com/v0/b/grocery-project-8f6bf.appspot.com/o/images%2F"+URLEncoder.encode(fileName, StandardCharsets.UTF_8) + "?alt=media";
     }
 

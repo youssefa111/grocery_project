@@ -2,6 +2,7 @@ package com.grocery_project.project.service;
 
 import com.grocery_project.core.base.BaseResponse;
 import com.grocery_project.core.constant.AppConstants;
+import com.grocery_project.core.exception_handling.exception.RecordNotFoundException;
 import com.grocery_project.project.dto.quantity.QuantityRequestDTO;
 import com.grocery_project.project.dto.quantity.QuantityUpdateDTO;
 import com.grocery_project.project.entity.Category;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +28,19 @@ public class QuantityService {
     public BaseResponse<Quantity> save(QuantityRequestDTO quantityRequestDTO) {
         Quantity entity = quantityMapper.toEntity(quantityRequestDTO);
         var result =quantityRepository.save(entity);
-        return  new BaseResponse<>(result,"This category is created Successfully!");
+        return  new BaseResponse<>(result,"This quantity is created Successfully!", AppConstants.CREATE_STATUS);
     }
 
     @Transactional
     public BaseResponse<Quantity> update(QuantityUpdateDTO quantityUpdateDTO) {
-        Quantity entity = quantityMapper.toEntity(quantityUpdateDTO);
-        var result =quantityRepository.save(entity);
-        return  new BaseResponse<>(result,"This category is updated Successfully!");
+        Optional<Quantity> result = quantityRepository.findById(quantityUpdateDTO.getId());
+        if(result.isPresent()){
+            var entity = result.get();
+          quantityMapper.updateQuantityFromDto(quantityUpdateDTO,entity);
+            entity =quantityRepository.save(entity);
+            return  new BaseResponse<>(entity,"This quantity is updated Successfully!");
+        }else {
+            throw new RecordNotFoundException("this quantity with id:-{"+ quantityUpdateDTO.getId() + "} not found");
+        }
     }
 }

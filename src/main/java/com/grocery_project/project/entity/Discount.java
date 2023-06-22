@@ -1,5 +1,6 @@
 package com.grocery_project.project.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Discount {
     private Boolean isActive;
 
     @Column(name = "EXPIRE_DATE", nullable = false)
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate expireDate;
 
 }

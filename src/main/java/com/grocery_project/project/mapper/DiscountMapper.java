@@ -4,8 +4,7 @@ import com.grocery_project.project.dto.discount.DiscountRequestDTO;
 import com.grocery_project.project.dto.discount.DiscountResponseDTO;
 import com.grocery_project.project.dto.discount.DiscountUpdateDTO;
 import com.grocery_project.project.entity.Discount;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.*;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
@@ -13,6 +12,8 @@ import org.mapstruct.MappingConstants;
 public interface DiscountMapper {
 
     Discount toEntity(DiscountRequestDTO discountRequestDTO);
-    Discount toEntity(DiscountUpdateDTO discountUpdateDTO);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateDiscountFromDto(DiscountUpdateDTO discountUpdateDTO, @MappingTarget Discount discount);
     DiscountResponseDTO toDTO(Discount category);
 }

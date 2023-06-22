@@ -23,10 +23,24 @@ public class ApplicationExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(ApplicationExceptionHandler.class);
 
-    @ExceptionHandler(value = {Exception.class})
-    public ResponseEntity<BaseResponse> commentException1(Exception exception) {
-        exception.printStackTrace();
-        return null;
+//    @ExceptionHandler(value = {ExpiredJwtException.class})
+//    public ResponseEntity<BaseResponse> commentException1(ExpiredJwtException exception) {
+//        exception.printStackTrace();
+//        return ResponseEntity.ok(new BaseResponse(exception.getMessage()));
+//    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(CustomAccessDeniedHandler.class)
+    public BaseResponse<List<String>> forbiddenException(CustomAccessDeniedHandler ex) {
+
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(CustomExpiredJwtException.class)
+    public BaseResponse<List<String>> jwtExpiredException(CustomExpiredJwtException ex) {
+
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -44,23 +58,6 @@ public class ApplicationExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse<List<String>> handleRuntimeException(RuntimeException ex) {
-
-//        logger.info(ex.toString());
-//        logger.info("===========================================");
-//        logger.info(ex.getMessage());
-//        logger.info("===========================================");
-//        logger.info(ex.getCause().toString());
-//        logger.info("===========================================");
-//        logger.info(ex.getStackTrace().toString());
-//        logger.info("===========================================");
-//        logger.info(ex.getSuppressed().toString());
-//        logger.info("===========================================");
-//        logger.info(ex.getLocalizedMessage());
-//        logger.info("===========================================");
-//        logger.info(ex.getClass().toString());
-//        logger.info("===========================================");
-//        ex.printStackTrace();
-//        logger.info("===========================================");
 
         return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.BAD_REQUEST.name(), Boolean.FALSE, HttpStatus.BAD_REQUEST.value());
     }
@@ -100,19 +97,7 @@ public class ApplicationExceptionHandler {
         return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.BAD_REQUEST.name(), Boolean.FALSE, HttpStatus.BAD_REQUEST.value());
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(CustomAccessDeniedHandler.class)
-    public BaseResponse<List<String>> forbiddenException(CustomAccessDeniedHandler ex) {
 
-        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
-    }
-
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(CustomExpiredJwtException.class)
-    public BaseResponse<List<String>> forbiddenException(CustomExpiredJwtException ex) {
-
-        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
-    }
 
 
 //    @ExceptionHandler(value = {Exception.class})

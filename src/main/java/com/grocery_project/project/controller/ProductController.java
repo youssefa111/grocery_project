@@ -33,18 +33,11 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final FirebaseService firebaseService;
 
     @PostMapping
     public ResponseEntity<BaseResponse<Product>> save(@Valid @RequestBody ProductRequestDTO productRequestDTO , @RequestParam("image")MultipartFile image) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productRequestDTO,image));
     }
-
-    @PostMapping("/profile/pic")
-    public Object upload(@RequestParam("file") MultipartFile multipartFile) {
-        return firebaseService.upload(multipartFile);
-    }
-
 
     @PostMapping("/test")
     public ResponseEntity<BaseResponse<Product>> saveTest( String jsonFileVo , @RequestParam("image")MultipartFile image) throws IOException {
@@ -54,8 +47,8 @@ public class ProductController {
     }
 
     @PutMapping
-    public BaseResponse<Product> update(@Valid @RequestBody ProductUpdateDTO productUpdateDTO){
-        return productService.update(productUpdateDTO);
+    public BaseResponse<Product> update(@Valid @RequestBody ProductUpdateDTO productUpdateDTO, @RequestParam(value = "image",required = false) MultipartFile image) throws IOException {
+        return productService.update(productUpdateDTO,image);
     }
 
     @DeleteMapping("/{id}")
@@ -63,9 +56,24 @@ public class ProductController {
         return productService.delete(id);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse<ProductResponseDTO>> findById( @PathVariable("id")Long id){
+        return ResponseEntity.ok(productService.findById(id));
+    }
+
     @GetMapping
-    public ResponseEntity< BaseResponse<List<ProductResponseDTO>>> findAll(){
+    public ResponseEntity<BaseResponse<List<ProductResponseDTO>>> findAll(){
         BaseResponse<List<ProductResponseDTO>> result = productService.findAll();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/active")
+    @Secured({
+            AppConstants.ADMIN,
+            AppConstants.USER
+    })
+    public ResponseEntity< BaseResponse<List<ProductResponseDTO>>> findAllActives(){
+        BaseResponse<List<ProductResponseDTO>> result = productService.findActiveProducts();
         return ResponseEntity.ok(result);
     }
 }

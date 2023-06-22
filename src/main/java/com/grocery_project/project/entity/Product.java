@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -20,6 +21,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(LowercaseEntityListener.class)
+@DynamicUpdate
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,15 +49,15 @@ public class Product {
     @Column(name = "PURCHASE_NUM")
     private Long purchaseNum;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = CascadeType.ALL)
     @JoinColumn(name = "QUANTITY_ID", nullable = false)
     private Quantity quantity;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "DISCOUNT_ID")
     private Discount discount;
 

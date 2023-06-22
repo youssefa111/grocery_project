@@ -1,6 +1,7 @@
 package com.grocery_project.project.service;
 
 import com.grocery_project.core.base.BaseResponse;
+import com.grocery_project.core.constant.AppConstants;
 import com.grocery_project.core.exception_handling.exception.DuplicateRecordException;
 import com.grocery_project.core.exception_handling.exception.RecordNotFoundException;
 import com.grocery_project.project.dto.category.CategoryRequestDTO;
@@ -30,7 +31,7 @@ public class CategoryService {
         isCategoryExist(categoryRequestDTO.getCategory());
         Category entity = categoryMapper.toEntity(categoryRequestDTO);
       var result =  categoryRepository.save(entity);
-        return  new BaseResponse<>(result,"This category is added Successfully!");
+        return  new BaseResponse<>(result,"This category is added Successfully!", AppConstants.CREATE_STATUS);
     }
 
     private void isCategoryExist(String category){

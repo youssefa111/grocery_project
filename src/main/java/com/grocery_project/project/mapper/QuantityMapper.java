@@ -5,8 +5,7 @@ import com.grocery_project.project.dto.quantity.QuantityRequestDTO;
 import com.grocery_project.project.dto.quantity.QuantityResponseDTO;
 import com.grocery_project.project.dto.quantity.QuantityUpdateDTO;
 import com.grocery_project.project.entity.Quantity;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.*;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
@@ -14,6 +13,9 @@ import org.mapstruct.MappingConstants;
 public interface QuantityMapper {
 
     Quantity toEntity(QuantityRequestDTO quantityRequestDTO);
-    Quantity toEntity(QuantityUpdateDTO quantityUpdateDTO);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateQuantityFromDto(QuantityUpdateDTO quantityUpdateDTO,@MappingTarget Quantity quantity);
+
     QuantityResponseDTO toDTO(Quantity category);
 }

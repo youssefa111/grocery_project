@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@Slf4j
 public class JwtService {
 
     private static final String SECRET_KEY = "645367566B5970337336763979244226452948404D6351665468576D5A713474";
@@ -36,7 +38,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() +  JWT_EXPIRATION_TIME  )) // 3 DAYS
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME)) // 3 DAYS
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -47,7 +49,7 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
-        return   extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(new Date());
     }
 
     public Date extractExpiration(String token) {
@@ -65,9 +67,11 @@ public class JwtService {
 
 
     public Claims extractAllClaims(String token) {
+
         return Jwts
                 .parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
     }
+
 
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
