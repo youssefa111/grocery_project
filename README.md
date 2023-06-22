@@ -10,7 +10,7 @@ backend project developed with springboot framework. its RESTFUL api web service
 - Two roles ( admin - customer)
 - authentication with JWT token
 - authorization each role has its own securied apis
-- connect with firebase
+- connect with firebase (database storage)
 - connect with oracle database
 - validation on all apis
 - reduce boilerplate code with lombak
@@ -31,7 +31,7 @@ backend project developed with springboot framework. its RESTFUL api web service
 
 
 # DATABASE DIAGRAM
-
+(note: I am the one who designed this database diagram with all its entites and fields)
 <img src = "/src/main/resources/database/database_diagram.PNG" height="400" width="400">
 
 
