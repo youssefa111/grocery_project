@@ -32,6 +32,6 @@ backend project developed with springboot framework. its RESTFUL api web service
 
 # DATABASE DIAGRAM
 
-<img src = "screenshots/1.jpeg" height="400" width="400">
+<img src = "/src/main/resources/database/database_diagram.PNG" height="400" width="400">
 
 
