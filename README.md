@@ -13,6 +13,7 @@ backend project developed with springboot framework. its RESTFUL api web service
 - connect with firebase (database storage)
 - connect with oracle database
 - validation on all apis
+- handling exceptions
 - reduce boilerplate code with lombak
 - convert between entities and DTOS with mapstruct
 - and more...
