@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -26,6 +27,9 @@ public class Order {
 
     @Column(name = "IS_DELIVERED")
     private Boolean isDelivered;
+
+    @Column(name = "total_amount", nullable = false, precision = 5, scale = 2)
+    private BigDecimal totalAmount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USERS_ID", nullable = false)
