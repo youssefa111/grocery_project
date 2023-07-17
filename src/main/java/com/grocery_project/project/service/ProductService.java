@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -120,5 +121,9 @@ public class ProductService {
 
     public Product findByDiscountId(Long discountId){
         return productRepository.findByDiscount_Id(discountId).orElseThrow(() -> new RecordNotFoundException("There is no Product has discount with:- {"+ discountId + "}, please re-check the id of the discount if its already exist!"));
+    }
+
+    public BigDecimal findPriceById(Long id){
+        return productRepository.findPriceById(id);
     }
 }

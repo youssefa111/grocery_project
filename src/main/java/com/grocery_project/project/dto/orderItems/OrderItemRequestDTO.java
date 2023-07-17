@@ -2,7 +2,7 @@ package com.grocery_project.project.dto.orderItems;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 public class OrderItemRequestDTO {
 
     @JsonIgnore
-    private final Long orderId;
+    private  Long orderId;
     @NotNull
-    private final Long productId;
+    private  Long productId;
     @NotNull
-    private final Integer quantity;
-    @NotNull
-    private final BigDecimal pricePerUnit;
+    private  Integer quantity;
+    @JsonIgnore
+    private  BigDecimal pricePerUnit;
 }
