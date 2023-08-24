@@ -1,5 +1,6 @@
 package com.grocery_project.project.dto.product;
 
+import com.grocery_project.core.utils.CryptoUtils;
 import com.grocery_project.project.dto.category.CategoryResponseDTO;
 import com.grocery_project.project.dto.discount.DiscountResponseDTO;
 import com.grocery_project.project.dto.quantity.QuantityResponseDTO;
@@ -16,7 +17,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class ProductResponseDTO {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -41,4 +42,8 @@ public class ProductResponseDTO {
     private Instant createdAt;
 
     private Instant updatedAt;
+
+    public void setId(Long id) {
+        this.id = CryptoUtils.encrypt(id);;
+    }
 }
