@@ -1,0 +1,14 @@
+1- add the new way for authorization of apis with annotation approach
+2- add redis to cache and make categories and anything need to be cached
+3- add encryption for the other ids that back to frontend like id of user
+4- add the security key approach with jwt token and check the id of user who send this token and make sure that jwt token is generated from the application
+5- add configMap approach to the application with openShift or anything others you find
+6- add OTP verification to phone number and email confirmation features
+7- add localization for apis
+8- add zoneTime approach for dates of the application with milliseconds way or check on the internet for that
+
+
+
+
+// Recommend to Add
+- unit testing for service layer

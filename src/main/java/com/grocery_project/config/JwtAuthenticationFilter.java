@@ -68,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
                 filterChain.doFilter(request,response);
             }catch(JwtException e){
+            // TRY throw JwtException and give it message and handle it in ExceptionController
             BaseResponse errorResponse = new BaseResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.name(), Boolean.FALSE, HttpStatus.UNAUTHORIZED.value());
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());

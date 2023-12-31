@@ -104,14 +104,12 @@ public class ProductService {
     }
 
 
-
     public BaseResponse<List<ProductResponseDTO>> findAll() {
             var entities = productRepository.findAll();
             List<ProductResponseDTO> result = new ArrayList<>();
             entities.forEach(product -> result.add(productMapper.toDTO(product)));
             return new BaseResponse<>(result);
     }
-
     public BaseResponse<List<ProductResponseDTO>> findActiveProducts(){
         var entities = productRepository.findByStatusEquals(true);
         List<ProductResponseDTO> result = new ArrayList<>();

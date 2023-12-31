@@ -32,25 +32,12 @@ public class RegisterDto {
     @NotNull
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate dateOfBirth;
-    @NotNull
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate joinDate;
-    @NotBlank
-    @Size(min = 3 , max = 30)
-    private String address;
-    @NotBlank
-    @Size(min = 11 , max = 11)
-    private String phone;
-    @NotBlank
-    @Size(min = 3 , max = 30)
-    private String username;
     @Email
     @NotBlank
+    @Size( max = 50)
     private String email;
     @NotBlank
     @Size(min = 7 , max = 30)
     private String password;
-    @NotNull
-    private RoleDto role;
 
 }

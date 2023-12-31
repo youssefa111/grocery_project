@@ -13,7 +13,9 @@ import com.grocery_project.core.exception_handling.exception.DuplicateRecordExce
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,6 @@ public class UserService  {
     @Transactional
     public BaseResponse<String> register(RegisterDto request) {
         User user = userMapper.toEntity(request);
-        isUsernameExist(user);
         isEmailExist(user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setIsActive((short) 1);
@@ -46,12 +47,6 @@ public class UserService  {
         return  new BaseResponse<>(null,"User Account Created Successfully!");
     }
 
-    private void isUsernameExist(User user) {
-        var result = userRepository.findByUsername(user.getUsername());
-        if(result.isPresent()){
-            throw new DuplicateRecordException("This username already exists, try another one");
-        }
-    }
     private void isEmailExist(User user) {
         var result = userRepository.findByEmail(user.getEmail());
         if(result.isPresent()){
@@ -61,15 +56,23 @@ public class UserService  {
 
     @Transactional
     public UserDataResponse signin(LoginDto request) {
-     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword()));
-        var user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new UsernameNotFoundException("Username or Password is incorrect!"));
-        var jwtToken = jwtService.generateToken(user);
-        tokenService.revokeAllUserTokens(user);
-       var tokenResult = tokenService.saveUserToken(user, jwtToken,jwtService.extractExpiration(jwtToken));
-        UserDataResponse dto = userMapper.toDto(user);
-        dto.setToken(tokenService.toDto(tokenResult));
 
-        return  dto;
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
+
+            var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BadCredentialsException("Email or Password is incorrect!"));
+            var jwtToken = jwtService.generateToken(user);
+            tokenService.revokeAllUserTokens(user);
+            var tokenResult = tokenService.saveUserToken(user, jwtToken,jwtService.extractExpiration(jwtToken));
+            UserDataResponse dto = userMapper.toDto(user);
+            dto.setToken(tokenService.toDto(tokenResult));
+
+            return  dto;
+        }catch (AuthenticationException ex){
+            System.out.println("testHere Before");
+            throw new BadCredentialsException("Email or Password is incorrect!");
+        }
+
     }
 
 

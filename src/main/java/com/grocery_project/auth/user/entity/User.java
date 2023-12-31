@@ -40,15 +40,10 @@ public class User implements UserDetails {
     @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
-    @JsonFormat(pattern="yyyy-MM-dd")
-    @Column(name = "join_date", nullable = false)
-    private LocalDate  joinDate;
-    @Column(length = 50 , nullable = false)
+    @Column(length = 150)
     private String address;
-    @Column(length = 11 , nullable = false)
+    @Column(length = 11 )
     private String phone;
-    @Column(length = 30, nullable = false)
-    private String username;
     @Email
     @Column(length = 50, nullable = false)
     private String email;
@@ -81,7 +76,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override

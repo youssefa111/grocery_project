@@ -32,7 +32,6 @@ public class DiscountController {
     public ResponseEntity<BaseResponse<Discount>> save(@Valid @RequestBody DiscountRequestDTO discountRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(discountService.save(discountRequestDTO));
     }
-
     @PutMapping
     public BaseResponse<Discount> update(@Valid @RequestBody DiscountUpdateDTO discountUpdateDTO){
         return discountService.update(discountUpdateDTO);
