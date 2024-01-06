@@ -2,11 +2,14 @@ package com.grocery_project.core.base;
 
 import lombok.Data;
 
-import java.util.List;
+import java.io.Serial;
+import java.io.Serializable;
 
 
 @Data
-public class BaseResponse<T> {
+public class BaseResponse<T> implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -4439114469417994311L;
     private String message;
     private int statusCode;
     private Boolean success = Boolean.TRUE;

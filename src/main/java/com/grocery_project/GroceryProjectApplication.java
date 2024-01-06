@@ -1,22 +1,18 @@
 package com.grocery_project;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
 
 @SpringBootApplication
+@EnableCaching
 public class GroceryProjectApplication {
 
-	public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
-		SpringApplication.run(GroceryProjectApplication.class, args);
-	}
+        SpringApplication.run(GroceryProjectApplication.class, args);
+    }
 
 }

@@ -41,6 +41,11 @@ public class CategoryController {
         return categoryService.delete(id);
     }
 
+    @GetMapping("/{id}")
+    public BaseResponse<CategoryResponseDTO> findById(@Valid @NotNull @PathVariable("id") Long id) {
+        return categoryService.findById(id);
+    }
+
     @AllRole
     @GetMapping
     public ResponseEntity<BaseResponse<List<CategoryResponseDTO>>> findAll() {

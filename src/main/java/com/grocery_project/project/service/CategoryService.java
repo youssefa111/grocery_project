@@ -10,6 +10,8 @@ import com.grocery_project.project.entity.Category;
 import com.grocery_project.project.mapper.CategoryMapper;
 import com.grocery_project.project.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CachePut(value = "categories", key = "#categoryUpdateDTO.id")
     public BaseResponse<Category> update(CategoryUpdateDTO categoryUpdateDTO) {
         Category entity = categoryMapper.toEntity(categoryUpdateDTO);
         var result = categoryRepository.save(entity);
@@ -51,11 +54,13 @@ public class CategoryService {
     }
 
     @Transactional
+    @CachePut(value = "categories", key = "#id")
     public BaseResponse<String> delete(Long id) {
         categoryRepository.deleteById(id);
         return new BaseResponse<>(null, "This category is deleted Successfully!");
     }
 
+    @Cacheable(value = "categories", key = "#id")
     public BaseResponse<CategoryResponseDTO> findById(Long id) {
         Optional<Category> entity = categoryRepository.findById(id);
         if (entity.isPresent()) {
@@ -65,6 +70,7 @@ public class CategoryService {
         }
     }
 
+    @Cacheable(value = "categories")
     public BaseResponse<List<CategoryResponseDTO>> findAll() {
         var entities = categoryRepository.findAll();
         List<CategoryResponseDTO> result = new ArrayList<>();
