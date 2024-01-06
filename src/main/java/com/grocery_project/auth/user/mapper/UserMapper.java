@@ -12,7 +12,7 @@ import org.mapstruct.MappingConstants;
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         uses = {
-              RoleMapper.class,
+                RoleMapper.class,
                 TokenMapper.class
         }
 
@@ -20,10 +20,12 @@ import org.mapstruct.MappingConstants;
 public interface UserMapper {
 
 
-    @Mapping(target = "password",ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "roleId", source = "user.role.id")
     UserDataResponse toDto(User user);
 
-    User toEntity (RegisterDto registerDto);
+    @Mapping(target = "role.id", source = "registerDto.roleId")
+    User toEntity(RegisterDto registerDto);
 
 //    RegisterDto mapUserEntityToRegisterDto(User user);
 

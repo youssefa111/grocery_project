@@ -1,15 +1,15 @@
 package com.grocery_project.project.dto.product;
 
-import com.grocery_project.core.listeners.LowercaseEntityListener;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.grocery_project.project.dto.category.CategoryUpdateDTO;
 import com.grocery_project.project.dto.quantity.QuantityRequestDTO;
-import jakarta.persistence.EntityListeners;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 @Setter
@@ -25,12 +25,15 @@ public class ProductRequestDTO {
     @NotNull
     private BigDecimal price;
 
+    @JsonIgnore
     private Long purchaseNum = 0L;
 
+    @JsonIgnore
     private Boolean isStocked = false;
 
+    @JsonIgnore
     private Boolean status = true;
-//    @NotNull
+    //    @NotNull
 //    private MultipartFile image;
     @NotNull
     @Valid

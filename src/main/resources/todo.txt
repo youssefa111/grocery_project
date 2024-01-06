@@ -1,14 +1,25 @@
-1- add the new way for authorization of apis with annotation approach
-2- add redis to cache and make categories and anything need to be cached
-3- add encryption for the other ids that back to frontend like id of user
-4- add the security key approach with jwt token and check the id of user who send this token and make sure that jwt token is generated from the application
-5- add configMap approach to the application with openShift or anything others you find
-6- add OTP verification to phone number and email confirmation features
-7- add localization for apis
-8- add zoneTime approach for dates of the application with milliseconds way or check on the internet for that
 
-
-
+// Technical
+1-  add the new way for authorization of apis with annotation approach [DONE]
+2-  add redis to cache and make categories and anything need to be cached
+3-  add encryption for the other ids that back to frontend like id of user
+4-  add the security key approach with jwt token and check the id of user who send this token and make sure that jwt token is generated from the application
+5-  add configMap approach to the application with openShift or anything others you find
+6-  add OTP verification to phone number and email confirmation features
+7-  add localization for apis
+8-  add zoneTime approach for dates of the application with milliseconds way or check on the internet for that
+9-  add loggers in service layer in begin and end of every function and in exception happened
+10- add refresh token in the application
+11- add Users actions in Auditing
+12- add Properties Flavors ( DEV - TEST - PRODUCTION)
 
 // Recommend to Add
 - unit testing for service layer
+
+//===================================================================================================================================================================
+
+// Business
+- make discount work correctly and if it is active then the price of item is the discounted and make Scheduler By database the after expireDate the discount deactive
+- check the right way in transaction process in e-commerce application and the effect happen in database
+- add rating to product with take all cases of right way of doing this
+- check more scenarios for business cases in e-commerce application

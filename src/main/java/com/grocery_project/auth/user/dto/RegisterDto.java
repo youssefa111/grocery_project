@@ -39,5 +39,7 @@ public class RegisterDto {
     @NotBlank
     @Size(min = 7 , max = 30)
     private String password;
+    @NotNull
+    private short roleId;
 
 }

@@ -24,24 +24,20 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 public class SecurityConfiguration {
 
 
-//    @Autowired
-//    private  ExceptionHandlerFilter exceptionHandlerFilter;
-    @Autowired
-    private  JwtAuthenticationFilter jwtAuthFilter;
-    @Autowired
-    private  AuthenticationProvider authenticationProvider;
-    @Autowired
-    private  LogoutHandler logoutHandler;
-
-
-
     private final String[] UNSECURED_URLS = {
             AppConstants.baseUrl + "/user/auth/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html"
     };
-
+    //    @Autowired
+//    private  ExceptionHandlerFilter exceptionHandlerFilter;
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthFilter;
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
+    @Autowired
+    private LogoutHandler logoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

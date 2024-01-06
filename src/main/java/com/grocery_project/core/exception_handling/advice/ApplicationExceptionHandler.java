@@ -2,13 +2,11 @@ package com.grocery_project.core.exception_handling.advice;
 
 import com.grocery_project.core.base.BaseResponse;
 import com.grocery_project.core.exception_handling.exception.*;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,12 +35,19 @@ public class ApplicationExceptionHandler {
         return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
     }
 
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public BaseResponse<List<String>> accessDeniedException(AccessDeniedException ex) {
+        return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.FORBIDDEN.name(), Boolean.FALSE, HttpStatus.FORBIDDEN.value());
+    }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(CustomExpiredJwtException.class)
     public BaseResponse<List<String>> jwtExpiredException(CustomExpiredJwtException ex) {
 
         return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.UNAUTHORIZED.name(), Boolean.FALSE, HttpStatus.UNAUTHORIZED.value());
     }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)
     public BaseResponse<List<String>> badCredentialsException(BadCredentialsException ex) {
@@ -55,7 +59,6 @@ public class ApplicationExceptionHandler {
 //    public BaseResponse<List<String>> authenticaionException(AuthenticationException ex) {
 //        return new BaseResponse<>(Collections.singletonList("Email or Password is incorrect!"), HttpStatus.UNAUTHORIZED.name(), Boolean.FALSE, HttpStatus.UNAUTHORIZED.value());
 //    }
-
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -111,8 +114,6 @@ public class ApplicationExceptionHandler {
 
         return new BaseResponse<>(Collections.singletonList(ex.getMessage()), HttpStatus.BAD_REQUEST.name(), Boolean.FALSE, HttpStatus.BAD_REQUEST.value());
     }
-
-
 
 
 //    @ExceptionHandler(value = {Exception.class})
