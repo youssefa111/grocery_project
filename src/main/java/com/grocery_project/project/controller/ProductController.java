@@ -49,12 +49,19 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public BaseResponse<String> delete(@Valid @NotNull @PathVariable("id") Long id) {
+    public BaseResponse<String> delete(@Valid @NotNull @PathVariable("id") String id) {
         return productService.delete(id);
     }
 
+
+    @GetMapping("/deactivate/{id}")
+    public BaseResponse<String> deactivate(@Valid @NotNull @PathVariable("id") String id) {
+        return productService.deactivateProduct(id);
+
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse<ProductResponseDTO>> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<BaseResponse<ProductResponseDTO>> findById(@PathVariable("id") String id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 
@@ -70,4 +77,6 @@ public class ProductController {
         BaseResponse<List<ProductResponseDTO>> result = productService.findActiveProducts();
         return ResponseEntity.ok(result);
     }
+
+
 }

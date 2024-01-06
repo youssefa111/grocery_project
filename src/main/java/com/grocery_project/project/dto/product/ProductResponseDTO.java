@@ -4,10 +4,11 @@ import com.grocery_project.core.utils.CryptoUtils;
 import com.grocery_project.project.dto.category.CategoryResponseDTO;
 import com.grocery_project.project.dto.discount.DiscountResponseDTO;
 import com.grocery_project.project.dto.quantity.QuantityResponseDTO;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import lombok.*;
-
-import java.io.File;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -43,7 +44,12 @@ public class ProductResponseDTO {
 
     private Instant updatedAt;
 
+    public Long getId() {
+        return Long.parseLong(CryptoUtils.decrypt(id));
+    }
+
     public void setId(Long id) {
-        this.id = CryptoUtils.encrypt(id);;
+        this.id = CryptoUtils.encrypt(id);
+        
     }
 }

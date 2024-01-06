@@ -1,7 +1,7 @@
 
 // Technical
 1-  add the new way for authorization of apis with annotation approach [DONE]
-2-  add redis to cache and make categories and anything need to be cached
+2-  add redis to cache and make categories and anything need to be cached [DONE]
 3-  add encryption for the other ids that back to frontend like id of user
 4-  add the security key approach with jwt token and check the id of user who send this token and make sure that jwt token is generated from the application
 5-  add configMap approach to the application with openShift or anything others you find
@@ -12,6 +12,7 @@
 10- add refresh token in the application
 11- add Users actions in Auditing
 12- add Properties Flavors ( DEV - TEST - PRODUCTION)
+13- add the application and the database on the server (Deployment)
 
 // Recommend to Add
 - unit testing for service layer

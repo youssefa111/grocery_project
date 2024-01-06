@@ -1,13 +1,17 @@
 package com.grocery_project.project.dto.order;
 
-import com.grocery_project.auth.user.entity.User;
-import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderResponseDTO {
 
     private Long id;
@@ -18,5 +22,10 @@ public class OrderResponseDTO {
 
     private BigDecimal totalAmount;
 
-    private Long  usersId;
+//    private String usersId;
+//
+//    public void setUsersId(Long id) {
+//        this.usersId = CryptoUtils.encrypt(id);
+//
+//    }
 }

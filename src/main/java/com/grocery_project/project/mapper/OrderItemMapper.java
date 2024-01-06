@@ -10,6 +10,7 @@ public interface OrderItemMapper {
     @Mapping(source = "orderId", target = "order.id")
     @Mapping(source = "productId", target = "product.id")
     OrderItem orderItemRequestDTOToOrderItem(OrderItemRequestDTO orderItemRequestDTO);
+    //test
 
     @InheritInverseConfiguration(name = "orderItemResponseDTOToOrderItem")
     OrderItemResponseDTO orderItemToOrderItemResponseDTO(OrderItem orderItem);

@@ -3,6 +3,7 @@ package com.grocery_project.auth.user.controller;
 
 import com.grocery_project.auth.user.dto.LoginDto;
 import com.grocery_project.auth.user.dto.RegisterDto;
+import com.grocery_project.auth.user.dto.UserDataResponse;
 import com.grocery_project.auth.user.service.UserService;
 import com.grocery_project.core.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,10 +32,10 @@ public class UserController {
     @Operation(
             description = "Register an account",
             responses = {
-                    @ApiResponse(responseCode ="400", ref = "badRequestAPI"),
+                    @ApiResponse(responseCode = "400", ref = "badRequestAPI"),
                     @ApiResponse(responseCode = "500", ref = "internalServerErrorAPI"),
-                    @ApiResponse(responseCode = "404", ref="recordNotFoundExceptionAPI"),
-                    @ApiResponse(responseCode = "409", ref="duplicateRecordExceptionAPI"),
+                    @ApiResponse(responseCode = "404", ref = "recordNotFoundExceptionAPI"),
+                    @ApiResponse(responseCode = "409", ref = "duplicateRecordExceptionAPI"),
                     @ApiResponse(
                             responseCode = "201",
                             description = "User Account Created Successfully!",
@@ -50,14 +51,14 @@ public class UserController {
                     )
             }
     )
-    public ResponseEntity<BaseResponse<String>> register(@RequestBody  @Valid RegisterDto request){
+    public ResponseEntity<BaseResponse<String>> register(@RequestBody @Valid RegisterDto request) {
 
-        return  ResponseEntity.status(HttpStatus.CREATED).body(service.register(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.register(request));
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<RegisterDto> login(@RequestBody @Valid LoginDto request){
+    public ResponseEntity<UserDataResponse> login(@RequestBody @Valid LoginDto request) {
 
-        return  ResponseEntity.ok(service.signin(request));
+        return ResponseEntity.ok(service.signin(request));
     }
 }

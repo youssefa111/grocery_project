@@ -1,15 +1,27 @@
 package com.grocery_project.project.dto.orderItems;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import com.grocery_project.core.utils.CryptoUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItemResponseDTO {
-    private final Long orderId;
-    private final Long productId;
-    private final Integer quantity;
-    private final BigDecimal pricePerUnit;
+    private Long orderId;
+    private String productId;
+    private Integer quantity;
+    private BigDecimal pricePerUnit;
+
+    public void setProductId(Long id) {
+        this.productId = CryptoUtils.encrypt(id);
+
+    }
+
+
 }

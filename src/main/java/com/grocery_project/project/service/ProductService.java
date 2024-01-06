@@ -3,6 +3,7 @@ package com.grocery_project.project.service;
 import com.grocery_project.core.base.BaseResponse;
 import com.grocery_project.core.exception_handling.exception.DuplicateRecordException;
 import com.grocery_project.core.exception_handling.exception.RecordNotFoundException;
+import com.grocery_project.core.utils.CryptoUtils;
 import com.grocery_project.core.utils.FirebaseService;
 import com.grocery_project.project.dto.product.ProductRequestDTO;
 import com.grocery_project.project.dto.product.ProductResponseDTO;
@@ -73,8 +74,9 @@ public class ProductService {
     }
 
     @Transactional
-    public BaseResponse<String> deactivateProduct(Long id) {
-        var result = productRepository.findById(id);
+    public BaseResponse<String> deactivateProduct(String id) {
+        var realId = Long.parseLong(CryptoUtils.decrypt(id));
+        var result = productRepository.findById(realId);
         result.ifPresentOrElse(product -> product.setStatus(false), () -> {
             throw new RecordNotFoundException("this id {" + id + "} of product is not exist!");
         });
@@ -82,13 +84,15 @@ public class ProductService {
     }
 
     @Transactional
-    public BaseResponse<String> delete(Long id) {
-        productRepository.deleteById(id);
+    public BaseResponse<String> delete(String id) {
+        var realId = Long.parseLong(CryptoUtils.decrypt(id));
+        productRepository.deleteById(realId);
         return new BaseResponse<>(null, "This Product is deleted Successfully!");
     }
 
-    public BaseResponse<ProductResponseDTO> findById(Long id) {
-        Optional<Product> entity = productRepository.findById(id);
+    public BaseResponse<ProductResponseDTO> findById(String id) {
+        var realId = Long.parseLong(CryptoUtils.decrypt(id));
+        Optional<Product> entity = productRepository.findById(realId);
         if (entity.isPresent()) {
             return new BaseResponse<>(productMapper.toDTO(entity.get()));
         } else {

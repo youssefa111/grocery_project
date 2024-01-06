@@ -1,13 +1,14 @@
 package com.grocery_project.project.dto.product;
 
+import com.grocery_project.core.utils.CryptoUtils;
 import com.grocery_project.project.dto.category.CategoryUpdateDTO;
-import com.grocery_project.project.dto.quantity.QuantityRequestDTO;
 import com.grocery_project.project.dto.quantity.QuantityUpdateDTO;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 @Setter
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ProductUpdateDTO {
     @NotNull
-    private Long id;
+    private String id;
     private String name;
     private String description;
     private BigDecimal price;
@@ -25,4 +26,9 @@ public class ProductUpdateDTO {
     private Boolean status;
     private CategoryUpdateDTO categoryUpdateDTO;
     private QuantityUpdateDTO quantityUpdateDTO;
+
+    public Long getId() {
+        return Long.parseLong(CryptoUtils.decrypt(id));
+    }
+
 }
