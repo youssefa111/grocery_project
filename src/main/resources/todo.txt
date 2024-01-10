@@ -2,7 +2,7 @@
 // Technical
 1-  add the new way for authorization of apis with annotation approach [DONE]
 2-  add redis to cache and make categories and anything need to be cached [DONE]
-3-  add encryption for the other ids that back to frontend like id of user
+3-  add encryption for the other ids that back to frontend like id of user [DONE]
 4-  add the security key approach with jwt token and check the id of user who send this token and make sure that jwt token is generated from the application
 5-  add configMap approach to the application with openShift or anything others you find
 6-  add OTP verification to phone number and email confirmation features
