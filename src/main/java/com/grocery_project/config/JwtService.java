@@ -1,14 +1,12 @@
 package com.grocery_project.config;
 
-import com.grocery_project.core.exception_handling.exception.CustomExpiredJwtException;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,9 +19,11 @@ import java.util.function.Function;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class JwtService {
 
-    private static final String SECRET_KEY = "645367566B5970337336763979244226452948404D6351665468576D5A713474";
+    //    private static final String SECRET_KEY = "645367566B5970337336763979244226452948404D6351665468576D5A713474";
+    private final GenerateSecretKeyConfig generateSecretKeyConfig;
 
     @Value("${spring.jwt.jwtExpirationTime}")
     private int JWT_EXPIRATION_TIME;
@@ -39,7 +39,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME)) // 3 DAYS
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .signWith(getSignInKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
@@ -74,7 +74,7 @@ public class JwtService {
 
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(generateSecretKeyConfig.getSecretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
