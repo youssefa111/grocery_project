@@ -25,20 +25,26 @@ public class JwtService {
     //    private static final String SECRET_KEY = "645367566B5970337336763979244226452948404D6351665468576D5A713474";
     private final GenerateSecretKeyConfig generateSecretKeyConfig;
 
-    @Value("${spring.jwt.jwtExpirationTime}")
-    private int JWT_EXPIRATION_TIME;
+    @Value("${jwt.expiration-time}")
+    private long JWT_EXPIRATION_TIME;
+    @Value("${jwt.refresh-token-expiration-time}")
+    private long JWT_REFRESH_EXPIRATION_TIME;
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        return buildToken(new HashMap<>(), userDetails, JWT_EXPIRATION_TIME);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    public String generateRefreshToken(UserDetails userDetails) {
+        return buildToken(new HashMap<>(), userDetails, JWT_REFRESH_EXPIRATION_TIME);
+    }
+
+    public String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiryTime) {
 
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME)) // 3 DAYS
+                .setExpiration(new Date(System.currentTimeMillis() + expiryTime)) // 3 DAYS
                 .signWith(getSignInKey(), SignatureAlgorithm.HS512)
                 .compact();
     }

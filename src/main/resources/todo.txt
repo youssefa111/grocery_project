@@ -5,8 +5,7 @@
 - add encryption for the other ids that back to frontend like id of user [DONE]
 - add in security section :-
      {
-     - the security key approach with jwt token and check the id of user who send this token and make sure that jwt token is generated from the application
-     - add refresh token in the application
+     - add refresh token in the application [DONE]
      - reset password
      - users auditing
      - OAuth2

@@ -16,22 +16,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
-public class UserService  {
+public class UserService {
 
     private final TokenService tokenService;
-    private final JwtService jwtService;;
+    private final JwtService jwtService;
+    ;
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -44,12 +43,12 @@ public class UserService  {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setIsActive((short) 1);
         userRepository.save(user);
-        return  new BaseResponse<>(null,"User Account Created Successfully!");
+        return new BaseResponse<>(null, "User Account Created Successfully!");
     }
 
     private void isEmailExist(User user) {
         var result = userRepository.findByEmail(user.getEmail());
-        if(result.isPresent()){
+        if (result.isPresent()) {
             throw new DuplicateRecordException("This email already exists, try another one");
         }
     }
@@ -58,17 +57,20 @@ public class UserService  {
     public UserDataResponse signin(LoginDto request) {
 
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
             var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BadCredentialsException("Email or Password is incorrect!"));
-            var jwtToken = jwtService.generateToken(user);
+            var accessToken = jwtService.generateToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
             tokenService.revokeAllUserTokens(user);
-            var tokenResult = tokenService.saveUserToken(user, jwtToken,jwtService.extractExpiration(jwtToken));
+            var tokenResult = tokenService.saveUserToken(user, accessToken, jwtService.extractExpiration(accessToken));
             UserDataResponse dto = userMapper.toDto(user);
-            dto.setToken(tokenService.toDto(tokenResult));
+            var tokenDTO = tokenService.toDto(tokenResult);
+            tokenDTO.setRefreshToken(refreshToken);
+            dto.setToken(tokenDTO);
 
-            return  dto;
-        }catch (AuthenticationException ex){
+            return dto;
+        } catch (AuthenticationException ex) {
             System.out.println("testHere Before");
             throw new BadCredentialsException("Email or Password is incorrect!");
         }

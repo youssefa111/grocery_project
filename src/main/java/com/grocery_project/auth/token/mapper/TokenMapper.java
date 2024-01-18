@@ -8,6 +8,7 @@ import org.mapstruct.*;
 public interface TokenMapper {
     Token toEntity(TokenDto tokenDto);
 
+    @Mapping(source = "token", target = "accessToken")
     TokenDto toDto(Token token);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
