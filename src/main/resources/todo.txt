@@ -17,6 +17,7 @@
 - add loggers in service layer in begin and end of every function and in exception happened
 - add Properties Flavors ( DEV - TEST - PRODUCTION)
 - add the application and the database on the server (Deployment)
+- add Logging in service layer by using AOP
 
 // Recommend to Add
 - unit testing for service layer
