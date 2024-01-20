@@ -1,6 +1,7 @@
 package com.grocery_project.auth.user.service;
 
 import com.grocery_project.auth.token.service.TokenService;
+import com.grocery_project.auth.user.dto.ChangePasswordRequest;
 import com.grocery_project.auth.user.dto.LoginDto;
 import com.grocery_project.auth.user.dto.RegisterDto;
 import com.grocery_project.auth.user.dto.UserDataResponse;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.NoSuchElementException;
 
 @Service
@@ -80,5 +82,26 @@ public class UserService {
 
     public User getById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("Resource not found: " + userId));
+    }
+
+    public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        log.debug(user.toString());
+
+        // check if the current password is correct
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
+            throw new IllegalStateException("Wrong password");
+        }
+        // check if the two new passwords are the same
+        if (!request.newPassword().equals(request.confirmationPassword())) {
+            throw new IllegalStateException("Password are not the same");
+        }
+
+        // update the password
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+
+        // save the new password
+        userRepository.save(user);
     }
 }

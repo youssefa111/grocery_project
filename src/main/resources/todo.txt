@@ -6,7 +6,7 @@
 - add in security section :-
      {
      - add refresh token in the application [DONE]
-     - reset password
+     - reset password [DONE]
      - users auditing
      - OAuth2
      - add OTP verification to phone number and email confirmation features

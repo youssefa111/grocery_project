@@ -1,6 +1,7 @@
 package com.grocery_project.auth.user.controller;
 
 
+import com.grocery_project.auth.user.dto.ChangePasswordRequest;
 import com.grocery_project.auth.user.dto.LoginDto;
 import com.grocery_project.auth.user.dto.RegisterDto;
 import com.grocery_project.auth.user.dto.UserDataResponse;
@@ -15,10 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("${baseUrl}/user")
@@ -60,5 +60,15 @@ public class UserController {
     public ResponseEntity<UserDataResponse> login(@RequestBody @Valid LoginDto request) {
 
         return ResponseEntity.ok(service.signin(request));
+    }
+
+
+    @PatchMapping
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest request,
+            Principal connectedUser
+    ) {
+        service.changePassword(request, connectedUser);
+        return ResponseEntity.ok().build();
     }
 }
