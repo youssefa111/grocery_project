@@ -9,7 +9,9 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -20,7 +22,7 @@ import java.time.Instant;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(LowercaseEntityListener.class)
+@EntityListeners({LowercaseEntityListener.class, AuditingEntityListener.class})
 @DynamicUpdate
 public class Product {
     @Id
@@ -49,7 +51,7 @@ public class Product {
     @Column(name = "PURCHASE_NUM")
     private Long purchaseNum;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "QUANTITY_ID", nullable = false)
     private Quantity quantity;
 
@@ -68,6 +70,17 @@ public class Product {
     @Column(name = "UPDATED_AT")
     @UpdateTimestamp
     private Instant updatedAt;
+
+    @CreatedBy
+    @Column(
+            nullable = false,
+            updatable = false
+    )
+    private Long createdBy;
+
+    @LastModifiedBy
+    @Column(insertable = false)
+    private Long lastModifiedBy;
 
 
 }

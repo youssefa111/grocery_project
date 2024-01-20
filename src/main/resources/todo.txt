@@ -7,7 +7,7 @@
      {
      - add refresh token in the application [DONE]
      - reset password [DONE]
-     - users auditing
+     - users auditing [DONE]
      - OAuth2
      - add OTP verification to phone number and email confirmation features
      }
