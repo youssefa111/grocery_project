@@ -6,8 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "DISCOUNT")
@@ -15,6 +21,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +35,29 @@ public class Discount {
     private Boolean isActive;
 
     @Column(name = "EXPIRE_DATE", nullable = false)
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate expireDate;
+    
+    @CreatedDate
+    @Column(
+            nullable = false,
+            updatable = false
+    )
+    private LocalDateTime createDate;
+
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDateTime lastModified;
+
+    @CreatedBy
+    @Column(
+            nullable = false,
+            updatable = false
+    )
+    private Long createdBy;
+
+    @LastModifiedBy
+    @Column(insertable = false)
+    private Long lastModifiedBy;
 
 }
